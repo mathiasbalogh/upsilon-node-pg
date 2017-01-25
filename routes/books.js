@@ -57,8 +57,8 @@ router.post("/", function(req, res) {
       // 3. callback - function to run after the database gives us our result
       //               takes an error object and the result object as it's args
       client.query(
-        "INSERT INTO books (title, author, publication_date) VALUES ($1, $2, $3) RETURNING *;",
-        [ req.body.title, req.body.author, req.body.published ],
+        "INSERT INTO books (title, author, publication_date, edition, publisher) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
+        [ req.body.title, req.body.author, req.body.published, req.body.edition, req.body.publisher ],
         function(err, result) {
           done();
           if (err) {
@@ -72,6 +72,33 @@ router.post("/", function(req, res) {
       );
     }
   });
+
+  // router.post("/", function(req, res) {
+  //
+  //   pool.connect(function(err, client, done) {
+  //     if (err) {
+  //       console.log("Error connecting to DB", err);
+  //       res.sendStatus(500);
+  //       done();
+  //     } else {
+  //
+  //       client.query(
+  //         "INSERT INTO books (title, author, publication_date, edition, publisher) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
+  //         [ req.body.title, req.body.author, req.body.published, req.body.edition, req.body.publisher ],
+  //         function(err, result) {
+  //           done();
+  //           if (err) {
+  //             console.log("Error querying DB", err);
+  //             res.sendStatus(500);
+  //           } else {
+  //             console.log("Got info from DB", result.rows);
+  //             res.send(result.rows);
+  //           }
+  //         }
+  //       );
+  //     }
+  //   });
+
 });
 
 module.exports = router;
