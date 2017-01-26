@@ -6,6 +6,9 @@ $(function(){
 
   // listen for a submit event on the form
   $('#book-form').on('submit', addBook);
+  $('#book-list').on('click', '.save', updateBook);
+  $('#book-list').on('click', '.remove', removeBook);
+
 });
 
 function getBooks() {
@@ -23,16 +26,21 @@ function displayBooks(books) {
 
   books.forEach(function(book){
     var $li = $('<li></li>');
+    var $form = $('<form></form>');
+    $form.append('<input type="text" name="title" value="'+book.title+'"/>');
+    $form.append('<input type="text" name="author" value="'+book.author+'"/>');
 
-    $li.append('<p><strong>' + book.title + '</strong></p>');
-    $li.append('<p><em>' + book.author + '</em></p>');
-
-    var date = new Date(book.publication_date).toDateString();
-    $li.append('<p><time>' + date + '</time></p>');
-    $li.append('<p>' + book.edition + '</p>');
-    $li.append('<p>' + book.publisher + '</p>');
-    $li.append('<button id="delete">Delete</button>');
-
+    var date = new Date(book.publication_date).toISOString().slice(0,10);
+    $form.append('<input type="date" name="published" value="' + date +'"/>');
+    $form.append('<input type="text" name="edition" value="'+book.edition+'"/>');
+    $form.append('<input type="text" name="publisher" value="'+book.publisher+'"/>');
+    var $button = $('<button class="save">Save!</button>');
+    $button.data('id', book.id);
+    $form.append($button);
+    var $remove = $('<button class="remove">Remove!</button>');
+    $remove.data('id', book.id);
+    $form.append($remove);
+    $li.append($form);
     $('#book-list').append($li);
   });
 }
@@ -52,4 +60,28 @@ function addBook(event) {
     success: getBooks
   });
 
+}
+
+function updateBook(event){
+  event.preventDefault();
+  var $button = $(this);
+  var $form = $button.closest('form');
+
+  var formData = $form.serialize();
+
+  $.ajax({
+    url: '/books/'+ $button.data('id'),
+    type: 'PUT',
+    data: formData,
+    success: getBooks
+  });
+}
+function removeBook(event){
+  event.preventDefault();
+
+  $.ajax({
+    url: '/books/'+ $(this).data('id'),
+    type: 'DELETE',
+    success: getBooks
+  });
 }
