@@ -31,6 +31,7 @@ function displayBooks(books) {
     $li.append('<p><time>' + date + '</time></p>');
     $li.append('<p>' + book.edition + '</p>');
     $li.append('<p>' + book.publisher + '</p>');
+    $li.append('<button id="delete">Delete</button>');
 
     $('#book-list').append($li);
   });
